@@ -15,7 +15,8 @@ jobs:
         sudo apt install npm
         sudo npm install --package-lock
         npm audit fix
-          first
+            first 
+    
     
     - name: OWASP depency Check
       run: |
