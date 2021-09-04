@@ -1,0 +1,45 @@
+name: "Build Image from Dockerfile"
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Install docker
+      run: |
+        sudo apt update
+        sudo apt install apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" && sudo apt update
+        apt-cache policy docker-ce
+        sudo apt install docker-ce
+
+    - name: Build Docker image
+      run: |
+        docker build -t angular-example-app .
+
+    - name: Installing AWS CLI
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.DEMO_ID }}
+        aws-secret-access-key: ${{ secrets.DEMO_K }}
+        aws-region: ${{ secrets.AWS_REG }}    
+
+    - name: Pushing image to AWS
+      run: |
+        aws ecr get-login-password --region ${{ secrets.AWS_REG }} | docker login --username AWS --password-stdin ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com  
+        docker tag angular-example:latest ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example:latest
+        docker push ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example:latest
