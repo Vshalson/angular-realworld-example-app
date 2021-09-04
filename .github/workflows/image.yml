@@ -23,7 +23,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t angular-example-app .
+        docker build -t angular-example .
 
     - name: Installing AWS CLI
       run: |
@@ -41,5 +41,5 @@ jobs:
     - name: Pushing image to AWS
       run: |
         aws ecr get-login-password --region ${{ secrets.AWS_REG }} | docker login --username AWS --password-stdin ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com  
-        docker tag angular-example-app:latest ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example-app:latest
-        docker push ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example-app:latest
+        docker tag angular-example:latest ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example:latest
+        docker push ${{ secrets.AWS_LOG }}.dkr.ecr.${{ secrets.AWS_REG }}.amazonaws.com/angular-example:latest
