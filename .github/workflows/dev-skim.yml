@@ -1,0 +1,21 @@
+name: "DevSkim-Scan"
+
+on: 
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: DevSkim Code Quality
+        uses: microsoft/DevSkim-Action@v1
+        with:
+          directory-to-scan: '.'
+          should-scan-archives: false
+          output-filename: devskim-results.sarif
+          output-directory: ${{github.workspace}}/reports
+
